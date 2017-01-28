@@ -14,8 +14,8 @@ import javax.swing.JFrame;
 	        super("Monopoly Board");
 	 
 	        setSize(700, 700); // Specifies the size of the board (700 * 700)
-	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	        setLocationRelativeTo(null);
+	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //When the program stops running, the frame closes
+	        setLocationRelativeTo(null); //This makes the jframe appear in the middle
 	    }
 	 
 	    void drawLines(Graphics g) 
