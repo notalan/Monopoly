@@ -1,0 +1,79 @@
+//Liam,Connor,Alan
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D; 
+import javax.swing.JFrame;
+	 
+	public class MonopolyBoard extends JFrame 
+	{
+	 
+	    public MonopolyBoard() 
+	    {
+	        super("Monopoly Board");
+	 
+	        setSize(700, 700); // Specifies the size of the board (700 * 700)
+	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        setLocationRelativeTo(null);
+	    }
+	 
+	    void drawLines(Graphics g) 
+	    {
+	        Graphics2D Graphics2dim = (Graphics2D) g;
+	 
+	        Graphics2dim.drawLine(0, 100, 700, 100);
+	 
+	        Graphics2dim.draw(new Line2D.Double(100, 0, 100, 100)); // Top left box
+	        Graphics2dim.draw(new Line2D.Double(600, 0, 600, 100)); // Top right box
+	        Graphics2dim.draw(new Line2D.Double(600, 700, 600, 100)); // Bottom left box
+	        Graphics2dim.draw(new Line2D.Double(100, 700, 100, 100)); // Bottom right box
+	        Graphics2dim.draw(new Line2D.Double(700, 600, 0, 600)); // Top right box
+	        Graphics2dim.draw(new Line2D.Double(700, 0, 700, 700)); //closing the right hand side
+	        Graphics2dim.draw(new Line2D.Double(0, 700, 700, 700)); //closing the bottom of it
+	        
+	        Graphics2dim.draw(new Line2D.Double(162.5, 0, 162.5, 100)); // Top row of board
+	        Graphics2dim.draw(new Line2D.Double(225, 0, 225, 100)); // Works as X1,Y1,X2,Y2
+	        Graphics2dim.draw(new Line2D.Double(287.5, 0, 287.5, 100)); 
+	        Graphics2dim.draw(new Line2D.Double(350, 0, 350, 100));
+	        Graphics2dim.draw(new Line2D.Double(412.5, 0, 412.5, 100));
+	        Graphics2dim.draw(new Line2D.Double(475, 0, 475, 100));
+	        Graphics2dim.draw(new Line2D.Double(537.5, 0, 537.5, 100));
+
+	        Graphics2dim.draw(new Line2D.Double(0, 162.5, 100, 162.5)); // Left row of board
+	        Graphics2dim.draw(new Line2D.Double(0, 225, 100, 225));
+	        Graphics2dim.draw(new Line2D.Double(0, 287.5, 100, 287.5));
+	        Graphics2dim.draw(new Line2D.Double(0, 350, 100, 350));
+	        Graphics2dim.draw(new Line2D.Double(0, 412.5, 100, 412.5));
+	        Graphics2dim.draw(new Line2D.Double(0, 475, 100, 475));
+	        Graphics2dim.draw(new Line2D.Double(0, 537.5, 100, 537.5));
+	        
+	        Graphics2dim.draw(new Line2D.Double(600, 162.5, 700, 162.5)); // Right row of board
+	        Graphics2dim.draw(new Line2D.Double(600, 225, 700, 225));
+	        Graphics2dim.draw(new Line2D.Double(600, 287.5, 700, 287.5));
+	        Graphics2dim.draw(new Line2D.Double(600, 350, 700, 350));
+	        Graphics2dim.draw(new Line2D.Double(600, 412.5, 700, 412.5));
+	        Graphics2dim.draw(new Line2D.Double(600, 475, 700, 475));
+	        Graphics2dim.draw(new Line2D.Double(600, 537.5, 700, 537.5));
+	        
+	        Graphics2dim.draw(new Line2D.Double(162.5, 600, 162.5, 700)); // Bottom row of board
+	        Graphics2dim.draw(new Line2D.Double(225, 600, 225, 700));
+	        Graphics2dim.draw(new Line2D.Double(287.5, 600, 287.5, 700));
+	        Graphics2dim.draw(new Line2D.Double(350, 600, 350, 700));
+	        Graphics2dim.draw(new Line2D.Double(412.5, 600, 412.5, 700));
+	        Graphics2dim.draw(new Line2D.Double(475, 600, 475, 700));
+	        Graphics2dim.draw(new Line2D.Double(537.5, 600, 537.5, 700));
+	        
+	    }
+	 
+	    public void paint(Graphics g) 
+	    {
+	        super.paint(g);
+	        drawLines(g);
+	    }
+	 
+	    public static void main(String[] args) 
+	    {
+	    	new MonopolyBoard().setVisible(true);
+	    }
+}
+	
