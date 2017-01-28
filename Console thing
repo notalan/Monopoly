@@ -1,0 +1,78 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+// console uses a listener to detect input from the by the user through the JFrame
+public class console extends JPanel implements ActionListener {
+    JTextField Field;// used to get input
+    JTextArea Area;// used to show previous inputs (optional)
+ 
+    public console() {
+        Field = new JTextField(25);
+        Field.addActionListener(this);
+ 
+        Area = new JTextArea(14, 25);
+        JScrollPane scrollPane = new JScrollPane(Area);// space to hold previous inputs
+        GridBagConstraints grid = new GridBagConstraints();// sets up JTextArea "Area" inside the JFrame
+        	grid.gridwidth = GridBagConstraints.PAGE_START;// aligns "Area" against side of JFrame
+        	add(Field, grid);// add this constraint to the text input box
+        	add(scrollPane, grid);// add this constraint to the scroll panel below
+        	Area.append("type \"commands\" to see all commands\n");
+    }
+ 
+    public void actionPerformed(ActionEvent evt) {
+        String input = Field.getText();// listener gets text input from user
+        Area.append(input + "\n" + "type \"commands\" to see all commands\n");// adding new line char so that the inputs are saved in Area making Field clear
+        Field.selectAll();// allows easy input of next command
+        Area.append(commands(input) + "\n");// sends input to be processed
+ 
+    }
+ 
+    public static void showConsole() {
+        JFrame frame = new JFrame("Input Commands");// create new frame
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new console());//adds the text field and scroll area to this new frame
+        frame.setLocation(700, 100);// placing frame beside monopoly board
+        frame.setSize(300, 300);
+        frame.setVisible(true);
+        
+    }
+    
+    public static String commands(String input){
+    
+    	if(input.compareTo("add player") == 0){// adds a new player
+    		//add function later
+    		String added = "Player added";
+    		return added;
+    	}
+    	else if(input.compareTo("roll dice") == 0){// rolls 3 dice
+    		String Dicerolls = "";
+    		for(int i = 0; i < 3; i++)
+    		{
+    		  int rand = 1 + (int)(Math.random()*6.0);// random number between 1 and 6
+    		  String Dice = Integer.toString(rand);
+    		  Dicerolls = Dicerolls + Dice + "\n";// puts all rolls in one string and returns it
+    		}
+    		return Dicerolls;
+    	}
+    	else if(input.compareTo("end turn") == 0)
+    	{
+    		// add function later
+    		String end = "Alan is gay";
+    		return end;
+    		
+    	}
+    	else if(input.compareTo("commands")==0){
+    		String commandList = "add player, roll dice, end turn, commands";
+    		return commandList;
+    	}
+    	else{
+    		String in = "unknown command";
+    		return in;
+    	}
+    }
+    
+ 
+    public static void main(String[] args) {
+    	showConsole();// placing the console on the screen
+    }
+}
