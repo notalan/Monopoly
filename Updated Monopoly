@@ -1,0 +1,148 @@
+//This merges both board and console liam smells
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+import java.awt.geom.Line2D;
+
+	public class Board extends JFrame implements ActionListener
+	{
+		JTextField Field;// used to get input
+	    JTextArea Area;// used to show previous inputs (optional)
+	 
+	    public void console() {
+	        Field = new JTextField(25);
+	        Field.addActionListener(this);
+	 
+	        Area = new JTextArea(14, 25);
+	        JScrollPane scrollPane = new JScrollPane(Area);// space to hold previous inputs
+	        GridBagConstraints grid = new GridBagConstraints();// sets up JTextArea "Area" inside the JFrame
+	        	grid.gridwidth = GridBagConstraints.PAGE_START;// aligns "Area" against side of JFrame
+	        	add(Field, grid);// add this constraint to the text input box
+	        	add(scrollPane, grid);// add this constraint to the scroll panel below
+	        	Area.append("Type \"commands\" to see all commands.\n");
+	    }
+	 
+	    public void actionPerformed(ActionEvent evt) {
+	        String input = Field.getText();// listener gets text input from user
+	        Area.append(input + "\n" + "Type \"commands\" to see all commands.\n");// adding new line char so that the inputs are saved in Area making Field clear
+	        Field.selectAll();// allows easy input of next command
+	        Area.append(commands(input) + "\n");// sends input to be processed
+	 
+	    }
+	 
+	    public static void showConsole() {
+	        JFrame frame = new JFrame("Input Commands");// create new frame
+	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        frame.add(new console());//adds the text field and scroll area to this new frame
+	        frame.setLocation(700, 100);// placing frame beside monopoly board
+	        frame.setSize(300, 300);
+	        frame.setVisible(true);
+	        
+	    }
+	    
+	    public static String commands(String input){
+	    
+	    	if(input.compareTo("add player") == 0){// adds a new player
+	    		//add function later
+	    		String added = "Player added";
+	    		return added;
+	    	}
+	    	else if(input.compareTo("roll dice") == 0){// rolls 3 dice
+	    		String Dicerolls = "";
+	    		for(int i = 0; i < 3; i++)
+	    		{
+	    		  int rand = 1 + (int)(Math.random()*6.0);// random number between 1 and 6
+	    		  String Dice = Integer.toString(rand);
+	    		  Dicerolls = Dicerolls + Dice + "\n";// puts all rolls in one string and returns it
+	    		}
+	    		return Dicerolls;
+	    	}
+	    	else if(input.compareTo("end turn") == 0)
+	    	{
+	    		// add function later
+	    		String end = "Alan is gay";
+	    		return end;
+	    		
+	    	}
+	    	else if(input.compareTo("commands")==0){
+	    		String commandList = "add player, roll dice, end turn, commands";
+	    		return commandList;
+	    	}
+	    	else{
+	    		String in = "unknown command";
+	    		return in;
+	    	}
+	    }
+	 
+	    public Board() 
+	    {
+	        super("Monopoly Board");
+	 
+	        setSize(700, 700); // Specifies the size of the board (700 * 700)
+	        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //When the program stops running, the frame closes
+	        setLocationRelativeTo(null); //This makes the jframe appear in the middle
+	    }
+	 
+	    void drawLines(Graphics g) 
+	    {
+	        Graphics2D Graphics2dim = (Graphics2D) g;
+	 
+	        Graphics2dim.drawLine(0, 100, 700, 100);
+	 
+	        Graphics2dim.draw(new Line2D.Double(100, 0, 100, 100)); // Top left box
+	        Graphics2dim.draw(new Line2D.Double(600, 0, 600, 100)); // Top right box
+	        Graphics2dim.draw(new Line2D.Double(600, 700, 600, 100)); // Bottom left box
+	        Graphics2dim.draw(new Line2D.Double(100, 700, 100, 100)); // Bottom right box
+	        Graphics2dim.draw(new Line2D.Double(700, 600, 0, 600)); // Top right box
+	        Graphics2dim.draw(new Line2D.Double(700, 0, 700, 700)); //closing the right hand side
+	        Graphics2dim.draw(new Line2D.Double(0, 700, 700, 700)); //closing the bottom of it
+	        
+	        Graphics2dim.draw(new Line2D.Double(162.5, 0, 162.5, 100)); // Top row of board
+	        Graphics2dim.draw(new Line2D.Double(225, 0, 225, 100)); // Works as X1,Y1,X2,Y2
+	        Graphics2dim.draw(new Line2D.Double(287.5, 0, 287.5, 100)); 
+	        Graphics2dim.draw(new Line2D.Double(350, 0, 350, 100));
+	        Graphics2dim.draw(new Line2D.Double(412.5, 0, 412.5, 100));
+	        Graphics2dim.draw(new Line2D.Double(475, 0, 475, 100));
+	        Graphics2dim.draw(new Line2D.Double(537.5, 0, 537.5, 100));
+
+	        Graphics2dim.draw(new Line2D.Double(0, 162.5, 100, 162.5)); // Left row of board
+	        Graphics2dim.draw(new Line2D.Double(0, 225, 100, 225));
+	        Graphics2dim.draw(new Line2D.Double(0, 287.5, 100, 287.5));
+	        Graphics2dim.draw(new Line2D.Double(0, 350, 100, 350));
+	        Graphics2dim.draw(new Line2D.Double(0, 412.5, 100, 412.5));
+	        Graphics2dim.draw(new Line2D.Double(0, 475, 100, 475));
+	        Graphics2dim.draw(new Line2D.Double(0, 537.5, 100, 537.5));
+	        
+	        Graphics2dim.draw(new Line2D.Double(600, 162.5, 700, 162.5)); // Right row of board
+	        Graphics2dim.draw(new Line2D.Double(600, 225, 700, 225));
+	        Graphics2dim.draw(new Line2D.Double(600, 287.5, 700, 287.5));
+	        Graphics2dim.draw(new Line2D.Double(600, 350, 700, 350));
+	        Graphics2dim.draw(new Line2D.Double(600, 412.5, 700, 412.5));
+	        Graphics2dim.draw(new Line2D.Double(600, 475, 700, 475));
+	        Graphics2dim.draw(new Line2D.Double(600, 537.5, 700, 537.5));
+	        
+	        Graphics2dim.draw(new Line2D.Double(162.5, 600, 162.5, 700)); // Bottom row of board
+	        Graphics2dim.draw(new Line2D.Double(225, 600, 225, 700));
+	        Graphics2dim.draw(new Line2D.Double(287.5, 600, 287.5, 700));
+	        Graphics2dim.draw(new Line2D.Double(350, 600, 350, 700));
+	        Graphics2dim.draw(new Line2D.Double(412.5, 600, 412.5, 700));
+	        Graphics2dim.draw(new Line2D.Double(475, 600, 475, 700));
+	        Graphics2dim.draw(new Line2D.Double(537.5, 600, 537.5, 700));
+	        
+	    }
+	 
+	    public void paint(Graphics g) 
+	    {
+	        super.paint(g);
+	        drawLines(g);
+	    }
+	 
+	    public static void main(String[] args) 
+	    {
+	    	new Board().setVisible(true);
+	    	showConsole();
+	    }
+}
+	
