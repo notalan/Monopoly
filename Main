@@ -1,0 +1,36 @@
+// Trying to add dem 2 shits together
+// this is only the main bitch
+
+public static void main(String[] args) 
+	    {
+	    	test console = new test();
+	    	JFrame aWindow = new JFrame("This is a Border Layout");
+	    	Board monopoly = new Board();
+	    	
+	        aWindow.setBounds(50, 50, 1000, 1000); // Size
+	        aWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        BorderLayout border = new BorderLayout(); // Create a layout manager
+	        Container content = aWindow.getContentPane();
+	        content.setLayout(border); // Set the container layout mgr
+	        EtchedBorder edge = new EtchedBorder(EtchedBorder.RAISED); // Button border
+	        content.add(console, BorderLayout.EAST);
+	        
+	        JButton button;
+	        content.add(button = new JButton("EAST"), BorderLayout.EAST);
+	        button.setBorder(edge);
+	        content.add(button = new JButton("WEST"), BorderLayout.WEST);
+	        button.setBorder(edge);
+	        content.add(button = new JButton("NORTH"), BorderLayout.NORTH);
+	        button.setBorder(edge);
+	        content.add(button = new JButton("SOUTH"), BorderLayout.SOUTH);
+	        button.setBorder(edge);
+	        content.add(button = new JButton("CENTER"), BorderLayout.CENTER);
+	        button.setBorder(edge);
+	        
+	        aWindow.setVisible(true);
+	        
+//	    	
+//	    	test mypanel = new test();
+//	    	mypanel.setVisible(true);
+	    	
+	    }
