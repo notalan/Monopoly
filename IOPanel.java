@@ -94,9 +94,25 @@ public class IOPanel extends JPanel implements ActionListener
     		}
     		String Dicerolls = "";
 //    		String Dicerolls2 ="";
+		int temp = 0
     		for(int i = 0; i < 2; i++)
     		{
-//      		  int rand1 = 1 + (int)(Math.random()*2.0);// random number between 1 and 6
+      		 	int rand1 = 1 + (int)(Math.random()*2.0);// random number between 1 and 6
+			if(temp == rand1)
+				{
+					get some more dice numbers mate
+					rand1 = rand1 + newdice1 + newdice2
+					if(temp == rand1)
+					{
+						get some more dice numbers mate
+						rand1 = rand1 + newdice1 + newdice2
+						if(temp == rand1)
+						{
+							go to jail lol
+						}
+					}
+				}
+			temp = rand1;
 //      		  int rand2 = 1 + (int)(Math.random()*2.0); // 2nd dice random between 1 and 6
       		  
     			int tileCount = 0;
