@@ -1,6 +1,7 @@
 
 public class Dice 
 {
+	int DiceRollFUN(){
 		String Dicerolls = "";
 		String Dicerolls2 = "";
 	
@@ -25,5 +26,5 @@ public class Dice
 			    		  }	  
 		     
 		     }
-
+	}
 }
