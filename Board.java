@@ -254,7 +254,7 @@ import java.util.concurrent.TimeUnit;
 	    	IOPanel console = new IOPanel(); // Calls the console
 	    	Board monopoly = new Board();
 	    	
-	        monopoly.setBounds(0, 0, 1124, 800); // Size
+	        monopoly.setBounds(100, 20, 1124, 800); // Size
 	        monopoly.setUndecorated(true);
 	        JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, console.panel, console.panel1); // Splits the east side of the panel to fit the console
 	    	monopoly.add(pane, BorderLayout.EAST);
