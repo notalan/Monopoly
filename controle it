@@ -1,0 +1,589 @@
+package monopoly;
+//WeDemKois
+//Liam Braiden 15337941
+//Connor Clancy 15528697 
+//Alan Cheng 15440552
+//version 1.2
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
+import javax.swing.*;
+
+public class IOPanel extends JPanel implements ActionListener
+{
+
+	private static final long serialVersionUID = 1L;// this is there bc eclipse told me to put it here
+	
+	JTextField Field = new JTextField(25);
+	JTextArea Area = new JTextArea(40, 25);
+	JPanel panel = new JPanel();
+	JPanel panel1 = new JPanel();
+	
+	Player player[] = new Player[7];
+	public int pCount = 0, numOfPlayers = 0;//changed pMax to this
+	
+	Tile tile[] = new Tile[40];
+	
+	int endVal = 1;//setting this to 0 ends the game in board.java
+	boolean startGame = false;//changed this to boolean
+	boolean hasRolled = false;
+	IOPanel(){	
+	    panel1.setBounds(191, 50, 300, 400);// 191 =x, 50 = y, 300 = width, 400 = height
+	    JScrollPane scrollPane = new JScrollPane(Area);// area becomes scrollPane
+	    panel1.setEnabled(false);
+	    panel1.add(scrollPane);// add scrollPane to the panel
+	    
+	    panel.setBounds(250,0,100,50);
+	    Field.addActionListener(this);// used for detecting when user inputs stuff
+	    Field.setBorder(BorderFactory.createLineBorder(Color.black, 5));// border 4 fun
+	    panel.add(Field);// add the text field to the panel
+	      
+	    initialisePlayer();
+	    initialiseTiles();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent evt) 
+		{
+			String input = Field.getText();// listener gets text input from user
+	        Field.selectAll();// allows easy input of next command
+	        Area.append(commands(input) + "\n");// sends input to be processed
+	        Area.setCaretPosition(Area.getDocument().getLength());//keeps scrollpanel scrolled to bottom
+		}
+		
+		
+		public String commands(String input)
+		{
+	    	if(input.compareTo("add player") == 0)
+	    	{
+	    		if(startGame == true){// game has started, cannot add players
+	    			return "Cannot add new player(s), game has started.";
+	    		}
+	    		if(numOfPlayers > 4)// max players
+	    		{
+	    			return "too many players (2-6)";
+	    		}
+	    		else
+	    		{	
+	    			String name = JOptionPane.showInputDialog(null, "Please Enter player name");
+	    			player[pCount].addName(name);//just adds "player 1", "player 2", etc..
+	    			numOfPlayers = pCount++;//increase total and player count
+	    			return name + " has been added to the game";
+	    		}
+	    	}
+	    	else if(input.compareTo("details") == 0){//get player stats
+	    		if(startGame == false){// need to make players before you can get their details
+	    			return "You must have a player to do this.";
+	    		}
+	    		return player[pCount].getPlayer() + getPropertyNames();
+	    	}
+	    	else if(input.compareTo("start") == 0){// starts game, unlocks other commands
+	    		if(startGame == true || pCount <= 1){// game already started cannot restart, gonna be a diff function
+	    			return "Game cannot be started again.\nNeed at least 2 players.";
+	    		}
+	    		else
+	    		{
+	    			pCount = 0;//reset this to crawl through all players
+	    			int compare[] = new int[numOfPlayers + 1];
+	    			String startRolls;//use this to print rolls to screen
+	    			int curr = 0, prev = 0;
+	    			while(curr == prev){
+	    				for(int i = 0; i <= numOfPlayers; i++){
+	    					if(compare[i] != -1){ // - wasn't in the draw for highest roll
+	    					int rand1 = 1 + (int)(Math.random()*6.0);// random number between 1 and 6
+	    					int rand2 = 1 +(int)(Math.random()*6.0);// 2nd dice random between 1 and 6
+	          		  		startRolls = Integer.toString(rand1) + " " + Integer.toString(rand2) + "\n";
+	          		  		compare[i] = rand1 + rand2;//total
+	          		  		Area.append(player[i].name + ": " + startRolls);//printing to console
+	    					}
+	          		  	}
+	    				int temp = 0;
+	    				for(int i = 0; i <= numOfPlayers; i++){
+	    					if(compare[i] > temp)//finds max value of roles
+	    					{
+	    						temp = compare[i];
+	    						pCount = i;// set first player
+	    						curr = i;
+	    					}
+	    					else if(compare[i] == temp){
+	    						prev = i;
+	    					}
+	    					else{
+	    						compare[i] = -1;
+	    					}	
+	    				}
+	    			}
+	    			startGame = true;// set game to "started" mode
+	    			return player[pCount].name + " rolled the highest..\nGame has begun!";
+	    		}
+	    	}
+	    	else if(input.compareTo("roll dice") == 0)
+	    	{// rolls 2 dice
+	    		if(startGame == false){// game hasn't started yet, cannot roll dice
+	    			return "Game hasn't started yet.";
+	    		}
+	    		if(hasRolled == true){
+	    			return "You have already rolled this turn.";
+	    		}
+	    		hasRolled = true;
+	    		String Dicerolls = "";
+	    		int total = 0;//keeps track of total sum of rolled dice
+	    		  int rand1 = 1 + (int)(Math.random()*6.0);// random number between 1 and 6
+	    		  int rand2 = 1 +(int)(Math.random()*6.0);// 2nd dice random between 1 and 6
+	    		  total = rand1 + rand2;
+	    		  Dicerolls = "\nroll: " + Integer.toString(rand1) + " " + Integer.toString(rand2) + "\n";// puts all rolls in one string and returns it
+	    		  if(rand1 == rand2) // Checks if the numbers on the dice are the same
+	    		  {
+	    			  Area.append("you have rolled a double, you can roll again");
+	    			 hasRolled = false;// one must roll a second time to continue
+	    		  }
+	    		  	int tileCount = 0;
+		    		while(tileCount < total)// movement around board based on dice numbers and coordinates
+		    		{
+		    			if(player[pCount].getPlayery() > 650 && player[pCount].getPlayerx() > 100)// bottom right, start moving left
+		    			{
+		    				player[pCount].movePlayerx(player[pCount].getPlayerx() - 66);
+		    				if(player[pCount].getPlayerx() < 100)
+		    				{
+		    					player[pCount].movePlayery(700);
+		    					player[pCount].movePlayerx(20);
+		    				}
+		    			}
+		    			else if(player[pCount].getPlayery() > 100 && player[pCount].getPlayerx() <= 50)// bottom left, start moving up
+		    			{//player[pcount].position <= 9 --> alt method
+		    				player[pCount].movePlayery(player[pCount].getPlayery() - 66);
+		    				if(player[pCount].getPlayery() < 100)
+		    				{
+		    					player[pCount].movePlayery(30);
+		    					player[pCount].movePlayerx(40);
+		    				}
+		    			}
+		    			else if(player[pCount].getPlayery() <= 50 && player[pCount].getPlayerx() < 700)// top left, start moving right
+		    			{
+		    				player[pCount].movePlayerx(player[pCount].getPlayerx() + 68);
+		    				if(player[pCount].getPlayery() >= 650)
+		    				{
+		    					player[pCount].movePlayery(40);
+		    					player[pCount].movePlayerx(750);
+		    				}
+		    			}
+		    			else if(player[pCount].getPlayery() <= 650 && player[pCount].getPlayerx()  > 650)// top right, start moving down
+		    			{
+		    				player[pCount].movePlayery(player[pCount].getPlayery() + 66);
+		    				if(player[pCount].getPlayery() > 650)
+		    				{
+		    					player[pCount].movePlayery(720);
+		    					player[pCount].movePlayerx(720);
+		    				}
+		    			}
+		    			else
+		    				Area.append("error");
+		    			
+		    			tileCount++;
+		    			player[pCount].position = (player[pCount].position + 1) % 40;//update player's position
+		    			
+		    			if(player[pCount].position == 1){//add 200 if passed go
+		    				player[pCount].addFunds(200);
+		    				Area.append("Passed GO! \nCollect €200");
+		    			}
+		    		}
+		    		
+		    		if(tile[player[pCount].position].getOwner().compareTo("") != 0)//checks to see if tile is owned
+		    		{	
+		    			player[pCount].debt(tile[player[pCount].position].payRent());	//adds debt	
+		    			Area.append("\nThis is an owned tile, please pay: € " + Integer.toString(player[pCount].moneyOwed()) + "\n");
+		    		}
+	        		
+	    			return Dicerolls + tile[player[pCount].position].getDetails();
+	    		  		  
+	    		}
+	    	if(input.compareTo("property") == 0)
+	    	{
+	    		if(startGame == false){// need to make players before you can get their properties
+	    			return "You need to have a valid player to do this.";
+	    		}
+	      		return "You own: " + getPropertyNames();
+	    	}
+	    	if(input.compareTo("balance") == 0)
+	    	{
+	    		if(startGame == false){// need to make players before you can get their balance
+	    			return "You need to have a valid player to do this.";
+	    		}
+	    		String current_balance = "Your current balance is: " + player[pCount].getBalance() + "\n";
+	    		return current_balance;
+	    	}
+	    	else if(input.compareTo("buy")==0){
+	    		if(checkTiles()){
+	    			return "This tile cannot be bought.";
+	    		}
+	    		if(tile[player[pCount].position].getOwner().equals(""))
+	    		{
+	    			player[pCount].spendFunds(tile[player[pCount].position].getPrice());//"tile[player[pCount].position" is whatever tile the player is on
+	        		player[pCount].addProperty(player[pCount].position);//adds tile number to an array
+	        		tile[player[pCount].position].setOwner(player[pCount].name);//sets String owner to the player's name
+	    			return "\nEnjoy your new purchase.";
+	    		}
+	    		else
+	    		{
+	    			return "This tile is already owned.";	
+	    		}
+	    	}
+	    	if(input.compareTo("pay rent") == 0)
+	    	{
+	    		if(startGame == false){// need to make players before you can get their balance
+	    			return "You need to have a valid player to do this.";
+	    		}
+	    		if(player[pCount].moneyOwed() == 0){
+	    			return "No outstanding rent to pay";
+	    		}
+	    		if(player[pCount].moneyOwed() > player[pCount].getBalance()){//cannot pay rent
+	    			return "You are out of money, you must declare bankrupcy:\n type \"bankrupt\" ";
+	    		}
+	    		int rentpointer = pCount;
+	    		for(int currentPlayer = 0; currentPlayer < numOfPlayers; currentPlayer++)//finds who owns the tile
+	    		{
+	    			if(player[currentPlayer].name == tile[player[pCount].position].getOwner() && (tile[player[pCount].position].getOwner().compareTo(player[pCount].name)!= 0)); // Rent
+	    				{
+	    					rentpointer = currentPlayer;//finds player whom the rent is owed to
+	    				}
+	    		}
+//	    		check if the players' owned property is mortgaged or not, if yes, then no rent is paid
+	    		for(int i = 0; i < 35; i++)
+	    		{
+	    			if(player[pCount].position == player[rentpointer].mortgaged[i])
+    					{
+    						return "This property is mortgaged, no rent needs to be paid.";
+    					}
+	    		}
+	    			player[pCount].spendFunds(tile[player[pCount].position].payRent());//takes funds from current player
+	    			player[rentpointer].addFunds(tile[player[pCount].position].payRent());//add funds to owner's pocket
+	   				player[pCount].payDebt(tile[player[pCount].position].payRent());
+					return "rent paid to " + player[rentpointer].name;
+	    				
+	    		
+	    	}
+	    	if(input.compareTo("bankrupt") == 0)
+	    	{
+	    		if(startGame == false){// game hasn't started yet cannot declare bankrupcy
+	    			return "The game hasn't started yet.";
+	    		}
+	    		if(player[pCount].moneyOwed() < player[pCount].getBalance()){//cannot pay rent
+	    			if(getPropertyNames().compareTo("") != 0){
+	    				return "you can mortgage some properties";
+	    			}
+	    			return "you do not need to declare bankrupcy yet";
+	    		}
+	    		else{
+	    			for(int i = 0; i < 35; i++){
+	    				if(player[pCount].property[i] != -1)// -1 means that that entry is not an owned property
+	    				{	
+	    					player[pCount].property[i] = -1;
+	    					tile[player[pCount].property[i]].setOwner("");
+	    					//tile[player[pCount].property[i]] --> houseOrNo = 0;
+	    				}
+	    			}
+	    			player[pCount].iQuit();
+	    			return endTurn();
+	    		}
+	    	}
+	    	if(input.compareTo("mortgage") == 0)
+	    	{
+	    		if(startGame == false){
+	    			return "It hasn't even started! What are you going to mortgage?";
+	    		}
+	    		String mortgage_item = JOptionPane.showInputDialog(null, "Which property do you want to mortgage? " + getPropertyNames());
+	    		return mortgage(mortgage_item);
+	    	}
+	    	if(input.compareTo("redeem") == 0)
+	    	{
+	    		if(startGame == false){
+	    			return "You can't redeem if the game hasn't even started!";
+	    		}
+	    		if(player[pCount].mortgaged == null){
+	    			return "You don't have anything to redeem!";
+	    		}
+	    		String redeem_item = JOptionPane.showInputDialog(null, "Which property do you want to redeem?");
+	    		return redeem(redeem_item);
+	    		
+	    	}
+	    	if(input.contains("demolish "))
+	    	{
+	    		if(startGame == false){
+	    			return "It hasn't even started! What are you going to sell?";
+	    		}
+	    		String sell_property = JOptionPane.showInputDialog(null, "Which property do you want to demolish?" + getPropertyNames());
+	    		return demolish(sell_property);
+	    	}
+	    	else if(input.compareTo("end turn") == 0)//ends the turn
+	    	{		
+	    		if(startGame == false){// game hasn't started yet cannot end turn
+	    			return "The game hasn't started yet.";
+	    		}
+	    		if(hasRolled == false){
+	    			return "Must role dice before ending turn.";
+	    		}
+	    		return endTurn();
+	    	}
+	    	else if(input.compareTo("quit")==0)
+	    	{
+	    		if(startGame == false){// game hasn't started yet cannot end turn
+	    			return "The game hasn't started yet.";
+	    		}
+	    		player[pCount].iQuit();//changes boolean in player class to signify this player has quit the game
+	    		int winningPlayer = quitCheck();
+	    		
+	    		if(winningPlayer != -1){
+	    			return "player " + player[winningPlayer].name + " is the winner with €" + Integer.toString(getAssets(winningPlayer)) + "!!!!";
+	    		}
+	    		return endTurn();
+	    	}
+	    	else if(input.compareTo("help")==0)
+	    	{
+	    		String commandList =  "add player = Adds a new player to the game. \n";
+	    		String commandList1 = "roll dice = Rolls the dice.\n";
+	    		String commandList2 = "end turn = Ends the current players turn.\n";
+	    		String commandList3 = "help = Displays the list of commands. \n";
+	    		String commandList4 = "details = displays all current players stats\nstart = starts game, locks player adding, unlocks other commands\n";
+	    		String commandList5 = "property = Displays all the owned properties of the player. \n";
+	    		String commandList6 = "balance = Displays the players' balance. \n";
+	    		String commandList7 = "buy = Buy allows you to buy property. \npay rent = Pays rent you owe. \n";
+	    		String commandList8 = "end = close the game abruptly.\nquit = Adds up assets and removes from the game. \n";
+	    		String commandList9 = "mortgage = mortgaging a current property that you own in return for instant cash but no rent collection. \n";
+	    		String commandList10 = "redeem = redeem a mortgaged property for the property value + 10%";
+	    		commandList = commandList + commandList1 +commandList2 + commandList3 + commandList4 + commandList5 + commandList6 + commandList7 + commandList8 + commandList9 + commandList10;
+	    		return commandList;
+	    	}
+	    	else if(input.compareTo("end")==0)//suddenly ends game
+	    	{
+	    		endVal = 0;
+	    		return "thank you for playing! KOIS";
+	    	}
+	    	else if(input.compareTo("snoop")==0){
+	    		String theNameOfThePlayerYoureSnoopingOn = JOptionPane.showInputDialog("enter player name");
+	    		for(int i = 0; i < numOfPlayers; i++)
+	    		{
+	    			if(player[i].name.compareTo(theNameOfThePlayerYoureSnoopingOn) == 0){
+	    				return player[i].getPlayer();
+	    			}
+	    		}
+	    		return "no player of this name";
+	    	}
+	    	else
+	    	{
+	    		String error = "Unknown command";
+	    		return error;
+	    	}
+		}
+		
+		public String demolish(String sell_property) {
+//			array = ArrayUtils.removeElement(array, element)
+			String property_sold = "";
+			for(int i=0; i < 35; i++)
+			if(sell_property.equals(player[pCount].mortgaged))
+			{
+				return property_sold; //IDK what you do when you sell a mortgaged property
+			}
+			for(int i=0; i < 35; i++)
+			{
+			if(sell_property.equals(player[pCount].property[i]))
+				{
+					player[pCount].addFunds(tile[i].getPrice()/2); 
+					//Need to change the line below to show the property name instead of the integer
+					property_sold = Integer.toString(player[pCount].property[i]) + " has been sold. Half of the properties' price has been added to your funds.\n"; 
+//					player[pCount].property = ArrayUtils.removeElement(player[pCount].property, player[pCount].property[i]); This is suppose to remove the element from the player's properties but has unknown error.
+				}
+			}
+			return property_sold;
+		}
+		public String redeem(String input){
+			int emptyarray[] = new int[1];
+			int temp = 0;
+			int countu = 0;
+			for(int i = 0; i < 35; i++)
+			{	
+				if(player[pCount].property[i] != -1)
+				{
+					if(tile[player[pCount].mortgaged[i]].getName().equals(input))
+					{
+						temp = player[pCount].mortgaged[i];
+						player[pCount].mortgaged[i] = emptyarray[0];
+						countu = i;
+					}
+				}
+			}
+			//check if player has the funds to redeem - DO LATER
+			player[pCount].spendFunds((int) (tile[temp].getPrice() * 1.1));
+			return "You redeemed: " + tile[temp].getName() + "\nYour balance now: €" + player[pCount].getBalance(); 
+		}
+
+		public String mortgage(String input) {
+			int countdracula = 0;
+			for(int i = 0; i < 30; i++)
+			{
+				if(player[pCount].property[i] != -1){
+					if(input.equals(tile[player[pCount].property[i]].getName()))
+					{
+						player[pCount].mortgaged[i] = player[pCount].property[i];
+						//player[pCount].property[i] = -1;
+						player[pCount].addFunds(tile[player[pCount].property[i]].Mortgage); //ADDING MORTGAGED FUNDS TO PLAYER MORTGAGING THE PROPERTY - cant access tile mortgage value
+						countdracula = i;
+					}
+				}
+			}
+			return "Mortgaged property: " + tile[player[pCount].mortgaged[countdracula]].getName() + "\nYour balance now: €" + player[pCount].getBalance();
+		}
+		
+		//end of the else if statements
+		boolean checkTiles(){//checks to see if player is on a tile that cannot be bought e.g. go, free parking, etc...
+			int noSale[]  = {0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36};
+			for(int i = 0; i < noSale.length; i++)
+			{
+				if(player[pCount].position == noSale[i])
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		String getPropertyNames()//gets comprehensive list of properties purchased by a player
+		{
+			String properties_owned = "";
+			for(int i = 0; i < 35; i++){
+				if(player[pCount].property[i] != -1)// -1 means that that entry is not an owned property
+				{	
+					properties_owned = properties_owned + tile[player[pCount].property[i]].getName() + "\n";
+				}
+			}
+			return properties_owned;
+		}
+		
+		int getAssets(int pNum){//calculates all of players assets
+			for(int i = 0; i < 35; i++){
+				if(player[pNum].property[i] != -1)// -1 means that that entry is not an owned property
+				{	
+					player[pNum].assets = player[pNum].assets + tile[player[pNum].property[i]].getPrice();
+				}
+			}
+			return player[pNum].assets;
+		}
+		
+		String endTurn(){
+    		if(player[pCount].moneyOwed() == 0){
+    		pCount = (pCount + 1) % (numOfPlayers +1);//points to next Player object in the array
+    		while(player[pCount].hasQuit()){//cycles through players who have quit until it reaches a player who is still playing
+    			pCount = (pCount + 1) % (numOfPlayers +1);
+    		}
+    		hasRolled = false;
+    			return "-------------------\nplayer " + player[pCount].name + "'s turn\n-------------------\n";
+    		}
+    		else
+    		{
+    			return "You must pay your debts.";
+    		}	
+		}
+		
+		int quitCheck(){//function checks to see if all the players have quit, and if so it ends the game and declares a winner
+			int numOfQuits = 0;
+    		for(int i = 0; i < numOfPlayers; i++){//check how many players have quit
+    			if(player[i].hasQuit()){
+    				numOfQuits++;
+    			}
+    		}
+    		if(numOfQuits == numOfPlayers){//if all players have quit 
+    			int temp = 0;
+    			for(int thisPlayer = 0; thisPlayer <= numOfPlayers; thisPlayer++){
+    				if(getAssets(thisPlayer) > temp)//finds max value of all player's assets
+    				{
+    					temp = getAssets(thisPlayer);
+    					pCount = thisPlayer;// set winner
+    				}			
+    			}
+    			endVal = 0;//ends game
+    			return pCount;//winning player
+    		}
+    		else
+    			return -1;//no player has won	
+		}
+		
+		void initialisePlayer()//sets up players and their starting values
+		{
+			int i = 0;
+			while(i < 7)
+			{
+				player[i] = new Player();
+				player[i].position = 0;
+				i++;
+			}
+		}
+		
+		void initialiseTiles()//sets up all information to do with each tile
+			{
+				tile[0] = new Tile("GO", 0, 0, "", 0); // Goes name, price, rent, colour, mortgage
+				tile[1] = new Tile("Old Kent Road",60,2,"brown",30);
+				tile[2] = new Tile("Community Chest",0,0,"", 0);
+				tile[3] = new Tile("Whitechapel Road",60,4,"brown",30);
+				tile[4] = new Tile("Income Tax",-200,0,"",0);
+				tile[5] = new Tile("King's Cross Station",200,0,"",100); // LOOK HERE WHEN MULTIPLIERS ARE DONE
+				tile[6] = new Tile("The Angel Islington",100,6,"cyan",50);
+				tile[7] = new Tile("Chance",0,0,"",0);
+				tile[8] = new Tile("Euston Road",100,6,"cyan",50);
+				tile[9] = new Tile("Pentonville Road",120,8,"cyan",60);
+				tile[10] = new Tile("Jail/Just visiting",0,0,"",0);
+				tile[11] = new Tile("Pall Mall",140,10,"pink",70);
+				tile[12] = new Tile("Electric Company",0,0,"",75); // COME HERE TOO
+				tile[13] = new Tile("Whitehall",140,10,"pink",70);
+				tile[14] = new Tile("Northumberland Avenue",160,12,"pink",80);
+				tile[15] = new Tile("Fenchurch Street Station",200,0,"",100); // COME HERE TOO
+				tile[16] = new Tile("Bow Street",180,14,"orange",90);
+				tile[17] = new Tile("Community Chest",0,0,"",0); // COME HERE TOO
+				tile[18] = new Tile("Marlbourogh Street",180,14,"orange",90);
+				tile[19] = new Tile("Vine Street",200,16,"orange",100);
+				tile[20] = new Tile("Free Parking",0,0,"",0);
+				tile[21] = new Tile("The Strand",220,18,"red",110);
+				tile[22] = new Tile("Chance",0,0,"",0);
+				tile[23] = new Tile("Fleet Street",220,18,"red",110);
+				tile[24] = new Tile("Trafalgar Square",240,20,"red",120);
+				tile[25] = new Tile("Marylebone Station",200,0,"",100); // COME HERE TOO
+				tile[26] = new Tile("Leicester Square",260,22,"yellow",130);
+				tile[27] = new Tile("Coventry Street",260,22,"yellow",130);
+				tile[28] = new Tile("Water Works",0,0,"",75); // COME HERE TOO
+				tile[29] = new Tile("Picadilly",280,22,"yellow",140);
+				tile[30] = new Tile("Go to Jail!",0,0,"",0);
+				tile[31] = new Tile("Regent Street",300,26,"green",150);
+				tile[32] = new Tile("Oxford Street",300,26,"green",150);
+				tile[33] = new Tile("Community Chest",0,0,"",0);
+				tile[34] = new Tile("Bond Street",320,28,"green",160);
+				tile[35] = new Tile("Liverpool Street Station",200,0,"",100); // COME HERE TOO
+				tile[36] = new Tile("Chance",0,0,"",0);
+				tile[37] = new Tile("Park Lane",350,35,"blue",175);
+				tile[38] = new Tile("Luxary Tax",-100,0,"",0);
+				tile[39] = new Tile("Mayfair",400,50,"blue",200);		
+				
+				// There are some cases where it depends on the amount you own, the train stations and the utilities
+//				tile[5].setRent("King's Cross Station"); // Depends on amount of stations you own 25,50,100,200
+//				tile[12].setRent("Electric Company"); // If own 1 utility 4* dice roll
+//				tile[15].setRent("Fenchurch Street Station");
+//				tile[25].setRent("Marylebone Station");
+//				tile[28].setRent("Water Works"); // If own both utilities 10* dice roll is rent
+//				tile[35].setRent("Liverpool Street Station");
+			}
+		
+		boolean ColourGroupCheck(Player player, String tilecolour)
+		{
+			for (Tile PropertyName : tile) // iterates through the tile list
+			{
+				if(PropertyName.getColour().equals(tilecolour) && PropertyName.getOwner() != player.PlayerName())
+				{
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+	}
+//added comment beside endval, added scrollpane.setEnabled(false), added roll bit for start and if doubles, 
+//problems if names don't match for mortgaging, fix bankrupt to add in mortgage stuff, change player[pcount].position to variable name
